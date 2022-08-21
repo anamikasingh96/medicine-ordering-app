@@ -2,17 +2,6 @@ const express = require('express');
 const router =express.Router();
 const controller = require('./controller');
 
-// router.post('/upload-csv', async (req, res) => {
-//     let csv = req.files.file.data;
-//     let array = csv.toString().split("\r");
-//     let result = [];
-//     for (let i = 1; i < array.length - 1; i++) {
-//         let str = array[i].split(",");
-//         await controller.insertRecord(str[0], str[1], str[2], str[3], str[4], str[5], str[6], str[7], str[8], str[9]);
-//     }
-//     // console.log(JSON.stringify(result));
-// });
-
 // add-medicine
 router.post('/add-medicine', async (req, res) => {
     let {medicineName, medicineExpiryDate, balanceQuantity, mrp, manufacturer } = req.body;
@@ -44,12 +33,31 @@ router.post('/add-medicine', async (req, res) => {
 })
 
 //track-order
-router.get('/track-order', async (req, res) =>{
-    let orderId = req.query.order_id;
+router.get('/track-order/:orderId', async (req, res) =>{
+    let orderId = req.params.orderId;  //path-params
     let orderStatus = await controller.getOrderStatus(orderId);
-    res.send(orderStatus);
-    return;
+    if(orderStatus.data != null){
+        res.send({
+            state: orderStatus,
+            status: true
+        })
+    }else{
+        res.send({
+            state: null,
+            status: false,
+            message: "something went wrong"
+        })
+    }
+})
 
+router.get('/order-details/:orderId', async (req, res) => {
+    let orderId = req.params.orderId;
+    let orderDetails = await controller.getOrderDetails(orderId);
+    res.send({
+        details: orderDetails,
+        status: true
+    })
+    return;
 })
 
 //based on matching

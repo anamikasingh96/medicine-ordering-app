@@ -54,3 +54,6 @@ create table order_details (
     created_at timestamp with time zone default CURRENT_TIMESTAMP not null,
     updated_at timestamp with time zone default CURRENT_TIMESTAMP not null
 )*/
+
+// select od.*, omd.medicine_name, omd.quantity from order_details as od join order_medicine_details as omd on od.order_id = omd.order_id 
+// where od.order_id = 'orderId' and od.status = true;

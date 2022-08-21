@@ -5,6 +5,13 @@ module.exports.STATE = {
     DELIVERED: 4
 }
 
+module.exports.REVSTATE = {
+    1: "PLACED",
+    2: "SHIPPED",
+    3: "OUT_FOR_DELIVERY",
+    4: "DELIVERED"
+}
+
 module.exports.STATUS = {
     ACTIVE: true,
     INACTIVE: false
