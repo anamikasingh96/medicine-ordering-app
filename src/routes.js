@@ -1,3 +1,4 @@
+const { application } = require('express');
 const express = require('express');
 const router =express.Router();
 const controller = require('./controller');
@@ -103,5 +104,13 @@ router.post('/place-order', async (req, res) => {
         })
     }
 })
+
+// cancel-order
+router.put('/cancel-order/:orderId', async (req, res) =>{
+    let orderId = req.params.orderId;
+    let cancelRequest = await controller.cancelOrder(orderId);
+    res.send(cancelRequest);
+})
+
 
 module.exports = router;

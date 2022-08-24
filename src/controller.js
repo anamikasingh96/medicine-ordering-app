@@ -1,6 +1,7 @@
 const PostgreSql = require("./db-config-queries");
 const constants = require("./constant");
 const util = require("./utility");
+const { Pool } = require("pg");
 
 const placeOrder = async (orderDetails) => {
   try {
@@ -118,6 +119,32 @@ const getOrderDetails = async (orderId) => {
   }
 };
 
+const cancelOrder = async (orderId) => {
+  try {
+    let query = `select state from order_details where status = false and order_id = '${orderId}'`;
+    let queryRes = await PostgreSql.query(query);
+    console.log(queryRes);
+    if (queryRes.rows.length && queryRes.rows[0].state != constants.STATE.OUT_FOR_DELIVERY) {
+      let query = `update order_details set status = ${constants.STATUS.INACTIVE} where order_id = '${orderId}' and status =${constants.STATUS.ACTIVE}`;
+      await PostgreSql.query(query);
+
+      query = `insert into order_details (order_id, state, status) values ('${orderId}', ${constants.STATE.CANCELLED}, ${constants.STATUS.ACTIVE})`;
+      await PostgreSql.query(query);
+      return {
+        data: "order is cancelled",
+        status: true,
+      };
+    } else {
+      return {
+        data: "order can not be cancelled",
+        status: false,
+      };
+    }
+  } catch (err) {
+    console.log("error in getOrderStatus: ", err);
+  }
+};
+
 module.exports = {
   placeOrder,
   getMedicineDetails,
@@ -125,4 +152,5 @@ module.exports = {
   insertRecord,
   getOrderStatus,
   getOrderDetails,
+  cancelOrder,
 };
